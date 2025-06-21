@@ -1,4 +1,3 @@
-import json
 import numpy as np
 import pandas as pd
 
@@ -37,7 +36,6 @@ def create_time_domain_table(td_struct):
     data_sizes = [pkt["Header"]["dataSize"] for pkt in td_data]
     packet_sizes = [(ds / nc) / 2 for ds, nc in zip(data_sizes, n_chans)]
 
-    max_chans = 4
     nrows = int(sum(packet_sizes))
     cols = [
         "key0",
@@ -298,7 +296,7 @@ def assign_time(dataframe, short_gaps_system_tick=0):
         times = corr_shift[idx] - before + np.arange(
             samp_end - samp_start + 1
         ) * (1000 / fs)
-        derived[samp_start : samp_end + 1] = times
+        derived[samp_start:samp_end + 1] = times
 
     result = df_clean.copy()
     result.insert(0, "DerivedTime", derived)

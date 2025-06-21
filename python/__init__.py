@@ -5,4 +5,3 @@ __all__ = [
     'create_accel_table',
     'assign_time',
 ]
-
