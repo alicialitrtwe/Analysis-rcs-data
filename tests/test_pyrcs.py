@@ -7,7 +7,7 @@ from oct2py import Oct2Py, Oct2PyError
 import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from python import pyrcs
+from python import pyrcs  # noqa: E402
 
 DATA_DIR = os.path.join(
     os.path.dirname(__file__),
@@ -39,12 +39,12 @@ def make_faulty_struct():
         (2000, 5, 1030, 4),
         (2000, 5, 1030, 4),
     ]
-    for i, (sys, ts, pg, dts) in enumerate(specs):
+    for i, (sys_tick, ts, pg, dts) in enumerate(specs):
         packets.append(
             {
                 "Header": {
                     "dataSize": 4,
-                    "systemTick": sys,
+                    "systemTick": sys_tick,
                     "timestamp": {"seconds": ts},
                     "dataTypeSequence": dts,
                 },
@@ -73,10 +73,10 @@ def test_python_processing_runs():
 
 def test_compare_with_octave_helpers():
     """Compare python output with simplified Octave implementation."""
-    oc = Oct2Py()
-    oc.addpath(os.path.join(os.path.dirname(__file__), "..", "code"))
-    oc.addpath(os.path.join(os.path.dirname(__file__), "octave_helpers"))
     try:
+        oc = Oct2Py()
+        oc.addpath(os.path.join(os.path.dirname(__file__), "..", "code"))
+        oc.addpath(os.path.join(os.path.dirname(__file__), "octave_helpers"))
         td_struct = oc.deserializeJSON(TD_FILE)
         table, _ = oc.createTimeDomainTable_simple(td_struct, nout=2)
         matlab_out = oc.assignTime_octave(table)
@@ -101,10 +101,10 @@ def test_sample_points_consistency():
     py_table, _ = pyrcs.create_time_domain_table(td_struct)
     py_out = pyrcs.assign_time(py_table)
 
-    oc = Oct2Py()
-    oc.addpath(os.path.join(os.path.dirname(__file__), "..", "code"))
-    oc.addpath(os.path.join(os.path.dirname(__file__), "octave_helpers"))
     try:
+        oc = Oct2Py()
+        oc.addpath(os.path.join(os.path.dirname(__file__), "..", "code"))
+        oc.addpath(os.path.join(os.path.dirname(__file__), "octave_helpers"))
         td_struct_o = oc.deserializeJSON(TD_FILE)
         table, _ = oc.createTimeDomainTable_simple(td_struct_o, nout=2)
         matlab_out = oc.assignTime_octave(table)
@@ -123,9 +123,9 @@ def test_faulty_packet_handling():
     df, _ = pyrcs.create_time_domain_table(struct)
     py_out = pyrcs.assign_time(df, short_gaps_system_tick=1)
 
-    oc = Oct2Py()
-    oc.addpath(os.path.join(os.path.dirname(__file__), "octave_helpers"))
     try:
+        oc = Oct2Py()
+        oc.addpath(os.path.join(os.path.dirname(__file__), "octave_helpers"))
         table, _ = oc.createTimeDomainTable_simple(struct, nout=2)
         matlab_out = oc.assignTime_octave(table, 1)
     except Oct2PyError:
